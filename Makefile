@@ -55,8 +55,10 @@ BUILD_DIR := $(PROJ_DIR)/build
 OBJ_DIR := $(BUILD_DIR)/obj
 TESTS_DST_DIR := $(BUILD_DIR)/tests
 TESTS_SRC_DIR := $(PROJ_DIR)/tests
+INT_DST := $(OBJ_DIR)/interfaces
+IMPL_DST := $(OBJ_DIR)/implementations
 
-_BUILD_DIRS := obj docs tests
+_BUILD_DIRS := obj docs tests obj/interfaces obj/implementations
 BUILD_DIRS := $(foreach dir, $(_BUILD_DIRS), $(addprefix $(BUILD_DIR)/, $(dir)))
 
 directories := $(foreach dir, $(BUILD_DIRS), $(shell [ -d $(dir) ] || mkdir -p $(dir)))
@@ -65,7 +67,7 @@ directories := $(foreach dir, $(BUILD_DIRS), $(shell [ -d $(dir) ] || mkdir -p $
 # apps:= main
 tests:= $(TESTS_DST_DIR)/Test.WebBrowser#Test.Concepts.Char Test.Crypto.Base64#Test.Crypto.Symmetric.DES # Test.Async Test.App
 # all: $(tests) $(apps)
-all: Test.Maximus
+all: $(TESTS_DST_DIR)/Maximus
 
 std_headers:
 	$(GCC) -std=c++2b -fmodules-ts -x c++-header /usr/include/GLFW/glfw3.h
@@ -368,16 +370,20 @@ $(TESTS_DST_DIR)/Test.Huge: $(TESTS_SRC_DIR)/Test.Huge.cpp Huge.o ASN1.o
 # $(TESTS_DST_DIR)/Test.RSA: $(TESTS_SRC_DIR)/Test.RSA.cpp RSA_imp.o RSA.o Huge.o ASN1.o HEX.o
 # 	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
 
-Maximus.imp.o: implementations/Maximus.cpp 
+
+
+$(INT_DST)/Maximus.o: interfaces/Maximus.cpp #Maximus_imp.o
 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
 
-Maximus.o: interfaces/Maximus.cpp Maximus.imp.o
+$(IMPL_DST)/Maximus.o: implementations/Maximus.cpp $(INT_DST)/Maximus.o
 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
 
-Maximus_MODULES := Maximus.o
+ 
 
-Test.Maximus: tests/Maximus.cpp $(Maximus_MODULES)
-	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+Maximus_MODULES := $(IMPL_DST)/Maximus.o
+
+$(TESTS_DST_DIR)/Maximus: tests/Maximus.cpp $(Maximus_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES) -o $@
 
 # Test_Huge: $(TESTS_SRC_DIR)/Test.Huge.cpp Huge.o ASN1.o
 # 	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
@@ -428,5 +434,4 @@ clean:
 	rm -rf $(BUILD_DIR)
 	@rm -f Test_Huge
 	@rm -f Test_RSA
-
 # $(info $$var is [${var}])
