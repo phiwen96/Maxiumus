@@ -53,10 +53,12 @@ DOCS_DIR := $(PROJ_DIR)/docs
 # interfaces_DIR := $(LIB_DIR)/interfaces
 BUILD_DIR := $(PROJ_DIR)/build
 OBJ_DIR := $(BUILD_DIR)/obj
-TESTS_DST_DIR := $(BUILD_DIR)/tests
-TESTS_SRC_DIR := $(PROJ_DIR)/tests
+TESTS_DST := $(BUILD_DIR)/tests
+TESTS_SRC := $(PROJ_DIR)/tests
 INT_DST := $(OBJ_DIR)/interfaces
 IMPL_DST := $(OBJ_DIR)/implementations
+INT_SRC := interfaces
+IMPL_SRC := implementations
 
 _BUILD_DIRS := obj docs tests obj/interfaces obj/implementations
 BUILD_DIRS := $(foreach dir, $(_BUILD_DIRS), $(addprefix $(BUILD_DIR)/, $(dir)))
@@ -65,9 +67,9 @@ directories := $(foreach dir, $(BUILD_DIRS), $(shell [ -d $(dir) ] || mkdir -p $
 
 
 # apps:= main
-tests:= $(TESTS_DST_DIR)/Test.WebBrowser#Test.Concepts.Char Test.Crypto.Base64#Test.Crypto.Symmetric.DES # Test.Async Test.App
+tests:= $(TESTS_DST)/Test.WebBrowser#Test.Concepts.Char Test.Crypto.Base64#Test.Crypto.Symmetric.DES # Test.Async Test.App
 # all: $(tests) $(apps)
-all: $(TESTS_DST_DIR)/Maximus
+all: $(TESTS_DST)/Maximus
 
 std_headers:
 	$(GCC) -std=c++2b -fmodules-ts -x c++-header /usr/include/GLFW/glfw3.h
@@ -372,17 +374,17 @@ $(TESTS_DST_DIR)/Test.Huge: $(TESTS_SRC_DIR)/Test.Huge.cpp Huge.o ASN1.o
 
 
 
-$(INT_DST)/Maximus.o: interfaces/Maximus.cpp #Maximus_imp.o
+$(INT_DST)/Maximus.o: $(INT_SRC)/Maximus.cpp #Maximus_imp.o
 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
 
-$(IMPL_DST)/Maximus.o: implementations/Maximus.cpp $(INT_DST)/Maximus.o
+$(IMPL_DST)/Maximus.o: $(IMPL_SRC)/Maximus.cpp $(INT_DST)/Maximus.o
 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
 
  
 
 Maximus_MODULES := $(IMPL_DST)/Maximus.o
 
-$(TESTS_DST_DIR)/Maximus: tests/Maximus.cpp $(Maximus_MODULES)
+$(TESTS_DST)/Maximus: $(TESTS_SRC)/Maximus.cpp $(Maximus_MODULES)
 	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES) -o $@
 
 # Test_Huge: $(TESTS_SRC_DIR)/Test.Huge.cpp Huge.o ASN1.o
