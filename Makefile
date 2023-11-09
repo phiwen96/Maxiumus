@@ -105,7 +105,6 @@ clean:
 	@rm -f *.pem
 	@rm -f $(apps)
 	@rm -f $(tests)
-	rm -rf $(BUILD_DIR)
-	@rm -f Test_Huge
-	@rm -f Test_RSA
+	@rm -rf $(BUILD_DIR)
+
 # $(info $$var is [${var}])

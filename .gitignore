@@ -1,3 +1,6 @@
+*.gcm
+gcm.cache
+build
 *.pem
 
 # Prerequisites
