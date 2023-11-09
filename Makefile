@@ -71,16 +71,28 @@ tests:= $(TESTS_DST)/Test.WebBrowser#Test.Concepts.Char Test.Crypto.Base64#Test.
 # all: $(tests) $(apps)
 all: $(TESTS_DST)/Maximus
 
-$(INT_DST)/Maximus.o: $(INT_SRC)/Maximus.cpp
+$(INT_DST)/Bytes.o: $(INT_SRC)/Bytes.cpp
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/Bytes.o: $(IMPL_SRC)/Bytes.cpp $(INT_DST)/Bytes.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+
+$(INT_DST)/Maximus.o: $(INT_SRC)/Maximus.cpp $(IMPL_DST)/Bytes.o
 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
 
 $(IMPL_DST)/Maximus.o: $(IMPL_SRC)/Maximus.cpp $(INT_DST)/Maximus.o
 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
 
-Maximus_MODULES := $(IMPL_DST)/Maximus.o
 
-$(TESTS_DST)/Maximus: $(TESTS_SRC)/Maximus.cpp $(Maximus_MODULES)
-	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES) -o $@
+Maximus_MODULES := $(IMPL_DST)/Maximus.o $(IMPL_DST)/Bytes.o
+
+
+$(TESTS_DST)/Bytes: $(TESTS_SRC)/Bytes.cpp $(IMPL_DST)/Bytes.o
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+$(TESTS_DST)/Maximus: $(TESTS_SRC)/Maximus.cpp $(Maximus_MODULES) $(TESTS_DST)/Bytes
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $< $(Maximus_MODULES) $(CXX_LIBS) $(CXX_INCLUDES)
 
 
 clean:
