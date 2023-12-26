@@ -29,7 +29,7 @@ ifeq ($(detected_OS),Darwin)
 	VULKAN_VERSION = 1.3.236.0
 	VULKAN_SDK = /Users/philipwenkel/VulkanSDK/$(VULKAN_VERSION)
 	LIB_NLOHMANN := /opt/homebrew/Cellar/nlohmann-json/3.11.2
-	LIB_OPENSSL := /opt/homebrew/Cellar/openssl@3/3.1.2
+	LIB_OPENSSL := /opt/homebrew/Cellar/openssl@3/3.2.0
 	GLSLC_COMPILER = $(VULKAN_SDK)/macOS/bin/glslc
 	GCC = /opt/homebrew/Cellar/gcc/13.2.0/bin/g++-13
 	CXX_FLAGS += -D MACOS -D FONTS_DIR=\"/System/Library/Fonts/Supplemental\"
@@ -71,27 +71,172 @@ tests:= $(TESTS_DST)/Test.WebBrowser#Test.Concepts.Char Test.Crypto.Base64#Test.
 # all: $(tests) $(apps)
 all: $(TESTS_DST)/Maximus
 
-$(INT_DST)/Bytes.o: $(INT_SRC)/Bytes.cpp
+###################################################################################################
+############### Modules ###########################################################################
+
+############### Same ##############################################################################
+
+Same_MODULES := 
+
+$(INT_DST)/Same.o: $(INT_SRC)/Same.cpp $(Same_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/Same.o: $(IMPL_SRC)/Same.cpp $(INT_DST)/Same.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+Same_MODULES := $(IMPL_DST)/Same.o $(INT_DST)/Same.o $(Same_MODULES)
+
+$(TESTS_DST)/Same: $(TESTS_SRC)/Same.cpp $(Same_MODULES) #$(IMPL_DST)/Same.o
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/Same.o $(INT_DST)/Same.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Same $(Maximus_TESTS)
+
+############### Bytes ##############################################################################
+
+Bytes_MODULES :=
+
+$(INT_DST)/Bytes.o: $(INT_SRC)/Bytes.cpp $(Bytes_MODULES)
 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
 
 $(IMPL_DST)/Bytes.o: $(IMPL_SRC)/Bytes.cpp $(INT_DST)/Bytes.o
 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
 
+Bytes_MODULES := $(IMPL_DST)/Bytes.o $(INT_DST)/Bytes.o $(Bytes_MODULES)
 
-$(INT_DST)/Maximus.o: $(INT_SRC)/Maximus.cpp $(IMPL_DST)/Bytes.o
+$(TESTS_DST)/Bytes: $(TESTS_SRC)/Bytes.cpp $(Bytes_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/Bytes.o $(INT_DST)/Bytes.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Bytes $(Maximus_TESTS)
+
+############### Bool ##############################################################################
+
+Bool_MODULES :=
+
+$(INT_DST)/Bool.o: $(INT_SRC)/Bool.cpp $(Bool_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/Bool.o: $(IMPL_SRC)/Bool.cpp $(INT_DST)/Bool.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+Bool_MODULES := $(IMPL_DST)/Bool.o $(INT_DST)/Bool.o $(Bool_MODULES)
+
+$(TESTS_DST)/Bool: $(TESTS_SRC)/Bool.cpp $(Bool_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/Bool.o $(INT_DST)/Bool.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Bool $(Maximus_TESTS)
+
+############### EqualityComparable ##############################################################################
+
+EqualityComparable_MODULES := $(IMPL_DST)/Bool.o
+
+$(INT_DST)/EqualityComparable.o: $(INT_SRC)/EqualityComparable.cpp $(EqualityComparable_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/EqualityComparable.o: $(IMPL_SRC)/EqualityComparable.cpp $(INT_DST)/EqualityComparable.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+EqualityComparable_MODULES := $(IMPL_DST)/EqualityComparable.o $(INT_DST)/EqualityComparable.o $(EqualityComparable_MODULES)
+
+$(TESTS_DST)/EqualityComparable: $(TESTS_SRC)/EqualityComparable.cpp $(EqualityComparable_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/EqualityComparable.o $(INT_DST)/EqualityComparable.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/EqualityComparable $(Maximus_TESTS)
+
+############### Number ##############################################################################
+
+Number_MODULES :=
+
+$(INT_DST)/Number.o: $(INT_SRC)/Number.cpp $(Number_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/Number.o: $(IMPL_SRC)/Number.cpp $(INT_DST)/Number.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+Number_MODULES := $(IMPL_DST)/Number.o $(INT_DST)/Number.o $(Number_MODULES)
+
+$(TESTS_DST)/Number: $(TESTS_SRC)/Number.cpp $(Number_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/Number.o $(INT_DST)/Number.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Number $(Maximus_TESTS)
+
+############### Sequence ##############################################################################
+
+Sequence_MODULES := $(IMPL_DST)/Same.o
+
+$(INT_DST)/Sequence.o: $(INT_SRC)/Sequence.cpp $(Sequence_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/Sequence.o: $(IMPL_SRC)/Sequence.cpp $(INT_DST)/Sequence.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+Sequence_MODULES := $(IMPL_DST)/Sequence.o $(INT_DST)/Sequence.o $(Sequence_MODULES)
+
+$(TESTS_DST)/Sequence: $(TESTS_SRC)/Sequence.cpp $(Sequence_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/Sequence.o $(INT_DST)/Sequence.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Sequence $(Maximus_TESTS)
+
+############### Console ##############################################################################
+
+Console_MODULES := $(IMPL_DST)/Same.o
+
+$(INT_DST)/Console.o: $(INT_SRC)/Console.cpp $(Console_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/Console.o: $(IMPL_SRC)/Console.cpp $(INT_DST)/Console.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+Console_MODULES := $(IMPL_DST)/Console.o $(INT_DST)/Console.o $(Console_MODULES)
+
+$(TESTS_DST)/Console: $(TESTS_SRC)/Console.cpp $(Console_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/Console.o $(INT_DST)/Console.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Console $(Maximus_TESTS)
+
+############### Net ##############################################################################
+
+Net_MODULES :=
+
+$(INT_DST)/Net.o: $(INT_SRC)/Net.cpp $(Net_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/Net.o: $(IMPL_SRC)/Net.cpp $(INT_DST)/Net.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+Net_MODULES := $(IMPL_DST)/Net.o $(INT_DST)/Net.o $(Net_MODULES)
+
+$(TESTS_DST)/Net: $(TESTS_SRC)/Net.cpp $(Net_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/Net.o $(INT_DST)/Net.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Net $(Maximus_TESTS)
+
+############### Maximus ##############################################################################
+
+$(INT_DST)/Maximus.o: $(INT_SRC)/Maximus.cpp $(Maximus_MODULES)
 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
 
 $(IMPL_DST)/Maximus.o: $(IMPL_SRC)/Maximus.cpp $(INT_DST)/Maximus.o
 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
 
+Maximus_MODULES := $(IMPL_DST)/Maximus.o $(INT_DST)/Maximus.o $(Maximus_MODULES)
 
-Maximus_MODULES := $(IMPL_DST)/Maximus.o $(IMPL_DST)/Bytes.o
-
-
-$(TESTS_DST)/Bytes: $(TESTS_SRC)/Bytes.cpp $(IMPL_DST)/Bytes.o
-	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
-
-$(TESTS_DST)/Maximus: $(TESTS_SRC)/Maximus.cpp $(Maximus_MODULES) $(TESTS_DST)/Bytes
+$(TESTS_DST)/Maximus: $(TESTS_SRC)/Maximus.cpp $(Maximus_MODULES) $(Maximus_TESTS) #$(TESTS_DST)/Console $(TESTS_DST)/Bytes $(TESTS_DST)/TLS $(TESTS_DST)/Socket $(TESTS_DST)/Bool
 	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $< $(Maximus_MODULES) $(CXX_LIBS) $(CXX_INCLUDES)
 
 
@@ -108,3 +253,30 @@ clean:
 	@rm -rf $(BUILD_DIR)
 
 # $(info $$var is [${var}])
+
+
+# Socket_DEPENDENT_MODULES := $(IMPL_DST)/Same.o
+
+# $(INT_DST)/Socket.o: $(INT_SRC)/Socket.cpp $(IMPL_DST)/Same.o
+# 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+# $(IMPL_DST)/Socket.o: $(IMPL_SRC)/Socket.cpp $(INT_DST)/Socket.o
+# 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+# Socket_MODULES := $(IMPL_DST)/Socket.o $(INT_DST)/Socket.o $(Socket_DEPENDENT_MODULES)
+
+# $(TESTS_DST)/Socket: $(TESTS_SRC)/Socket.cpp $(Socket_MODULES)
+# 	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $< $(Socket_MODULES) $(CXX_LIBS) $(CXX_INCLUDES)
+
+
+
+
+# TLS_DEPENDENT_MODULES := $(IMPL_DST)/Socket.o $(IMPL_DST)/Bytes.o $(IMPL_DST)/Same.o
+
+# $(INT_DST)/TLS.o: $(INT_SRC)/TLS.cpp $(TLS_DEPENDENT_MODULES)
+# 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+# $(IMPL_DST)/TLS.o: $(IMPL_SRC)/TLS.cpp $(INT_DST)/TLS.o
+# 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+# TLS_MODULES := $(IMPL_DST)/TLS.o $(INT_DST)/TLS.o $(TLS_DEPENDENT_MODULES)

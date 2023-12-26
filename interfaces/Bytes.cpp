@@ -1,4 +1,8 @@
+module;
+#include <cstddef>
 export module Maximus.Bytes;
+
+export using byte = std::byte;
 
 export template <typename T, auto n>
 concept Bytes = sizeof (T) == n;
@@ -11,3 +15,5 @@ concept MaxBytes = sizeof (T) <= n;
 
 export template <typename T, auto n>
 concept MinBytes = sizeof (T) >= n;
+
+
