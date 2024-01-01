@@ -28,13 +28,15 @@ endif
 ifeq ($(detected_OS),Darwin)
 	VULKAN_VERSION = 1.3.236.0
 	VULKAN_SDK = /Users/philipwenkel/VulkanSDK/$(VULKAN_VERSION)
-	LIB_NLOHMANN := /opt/homebrew/Cellar/nlohmann-json/3.11.2
-	LIB_OPENSSL := /opt/homebrew/Cellar/openssl@3/3.2.0
+	LIB_NLOHMANN := /opt/homebrew/Cellar/nlohmann-json/3.11.3
+	LIB_OPENSSL := /opt/homebrew/Cellar/openssl@3/3.2.0_1
+	LIB_BOOST := /opt/homebrew/Cellar/boost/1.83.0
+	LIB_GLFW := /opt/homebrew/Cellar/glfw/3.3.9
 	GLSLC_COMPILER = $(VULKAN_SDK)/macOS/bin/glslc
 	GCC = /opt/homebrew/Cellar/gcc/13.2.0/bin/g++-13
 	CXX_FLAGS += -D MACOS -D FONTS_DIR=\"/System/Library/Fonts/Supplemental\"
-	CXX_LIBS = -L$(LIB_OPENSSL)/lib -lssl -lcrypto -L/opt/homebrew/lib -L/opt/homebrew/Cellar/glfw/3.3.8/lib -lglfw -L$(VULKAN_SDK)/macOS/lib -lvulkan.1.3.236 -lSDL2 -L/opt/homebrew/Cellar/freetype/2.13.2/lib -lfreetype
-	CXX_INCLUDES += -I$(LIB_OPENSSL)/include -I$(LIB_NLOHMANN) -I$(VULKAN_SDK)/macOS/include
+	CXX_LIBS = -L$(LIB_BOOST)/lib -lboost_system -lboost_url -L$(LIB_OPENSSL)/lib -lssl -lcrypto -L/opt/homebrew/lib -L$(LIB_GLFW)/lib -lglfw -L$(VULKAN_SDK)/macOS/lib -lvulkan.1.3.236 -lSDL2 -L/opt/homebrew/Cellar/freetype/2.13.2/lib -lfreetype
+	CXX_INCLUDES += -I$(LIB_GLFW)/include -I$(LIB_BOOST)/include -I$(LIB_OPENSSL)/include -I$(LIB_NLOHMANN) -I$(VULKAN_SDK)/macOS/include
 endif
 ifeq ($(detected_OS),Linux)
 	# LIB_OPENSSL := /usr/include/openssl
@@ -55,12 +57,14 @@ BUILD_DIR := $(PROJ_DIR)/build
 OBJ_DIR := $(BUILD_DIR)/obj
 TESTS_DST := $(BUILD_DIR)/tests
 TESTS_SRC := $(PROJ_DIR)/tests
+APPS_DST := $(BUILD_DIR)/apps
+APPS_SRC := $(PROJ_DIR)/apps
 INT_DST := $(OBJ_DIR)/interfaces
 IMPL_DST := $(OBJ_DIR)/implementations
 INT_SRC := interfaces
 IMPL_SRC := implementations
 
-_BUILD_DIRS := obj docs tests obj/interfaces obj/implementations
+_BUILD_DIRS := obj docs tests apps obj/interfaces obj/implementations
 BUILD_DIRS := $(foreach dir, $(_BUILD_DIRS), $(addprefix $(BUILD_DIR)/, $(dir)))
 
 directories := $(foreach dir, $(BUILD_DIRS), $(shell [ -d $(dir) ] || mkdir -p $(dir)))
@@ -69,7 +73,7 @@ directories := $(foreach dir, $(BUILD_DIRS), $(shell [ -d $(dir) ] || mkdir -p $
 # apps:= main
 tests:= $(TESTS_DST)/Test.WebBrowser#Test.Concepts.Char Test.Crypto.Base64#Test.Crypto.Symmetric.DES # Test.Async Test.App
 # all: $(tests) $(apps)
-all: $(TESTS_DST)/Maximus
+all: $(TESTS_DST)/Maximus $(APPS_DST)/Learn
 
 ###################################################################################################
 ############### Modules ###########################################################################
@@ -224,7 +228,7 @@ $(TESTS_DST)/Net: $(TESTS_SRC)/Net.cpp $(Net_MODULES)
 
 Maximus_MODULES := $(IMPL_DST)/Net.o $(INT_DST)/Net.o $(Maximus_MODULES)
 
-Maximus_TESTS := $(TESTS_DST)/Net $(Maximus_TESTS)
+# Maximus_TESTS := $(TESTS_DST)/Net $(Maximus_TESTS)
 
 ############### Maximus ##############################################################################
 
@@ -237,6 +241,11 @@ $(IMPL_DST)/Maximus.o: $(IMPL_SRC)/Maximus.cpp $(INT_DST)/Maximus.o
 Maximus_MODULES := $(IMPL_DST)/Maximus.o $(INT_DST)/Maximus.o $(Maximus_MODULES)
 
 $(TESTS_DST)/Maximus: $(TESTS_SRC)/Maximus.cpp $(Maximus_MODULES) $(Maximus_TESTS) #$(TESTS_DST)/Console $(TESTS_DST)/Bytes $(TESTS_DST)/TLS $(TESTS_DST)/Socket $(TESTS_DST)/Bool
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $< $(Maximus_MODULES) $(CXX_LIBS) $(CXX_INCLUDES)
+
+############### APPs ##############################################################################
+
+$(APPS_DST)/Learn: $(APPS_SRC)/Learn.cpp $(Maximus_MODULES) $(Maximus_TESTS) #$(TESTS_DST)/Console $(TESTS_DST)/Bytes $(TESTS_DST)/TLS $(TESTS_DST)/Socket $(TESTS_DST)/Bool
 	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $< $(Maximus_MODULES) $(CXX_LIBS) $(CXX_INCLUDES)
 
 
