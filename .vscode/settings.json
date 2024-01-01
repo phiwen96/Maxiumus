@@ -65,6 +65,11 @@
 		"compare": "cpp",
 		"concepts": "cpp",
 		"algorithm": "cpp",
-		"__memory": "cpp"
+		"__memory": "cpp",
+		"regex": "cpp",
+		"fstream": "cpp",
+		"deque": "cpp",
+		"iomanip": "cpp",
+		"stack": "cpp"
 	}
 }
