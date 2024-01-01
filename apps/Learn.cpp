@@ -67,6 +67,9 @@ auto main () -> int {
 		cerr << "internal error >> no toml table with name \"questions\" found" << endl;
 		exit (1);
 	}
+	pattern = regex {R"(\"\w*\")"};
+	iter = std::sregex_iterator {content.begin () + iter -> position (), content.end (), pattern};
+	cout << iter -> str () << endl;
 	// if (regex_search (saves, matches, pattern)) {
 	// 	cout << "yay" << endl;
 	// }
