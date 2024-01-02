@@ -61,6 +61,7 @@ auto main () -> int {
 	auto pattern = regex {R"(\[questions*\])"};
 	auto matches = smatch {};
 	auto content = string {std::istreambuf_iterator<char> {saves}, std::istreambuf_iterator<char> {}};
+	saves.close ();
 	
 	auto iter = std::sregex_iterator {content.begin (), content.end (), pattern};
 	if (iter == std::sregex_iterator {}) {
@@ -69,7 +70,7 @@ auto main () -> int {
 	}
 	pattern = regex {R"(\"\w*\")"};
 	iter = std::sregex_iterator {content.begin () + iter -> position (), content.end (), pattern};
-	cout << iter -> str () << endl;
+	// cout << iter -> str () << endl;
 	// if (regex_search (saves, matches, pattern)) {
 	// 	cout << "yay" << endl;
 	// }
@@ -86,12 +87,25 @@ auto main () -> int {
 	// auto pattern = regex {R"([a-z])"};
 	// auto matches = smatch {};
 	cout << "Lets Learn!" << endl;
-	cout << "intro part one >> enter \"fastmode\" to create new questions" << endl;
+	cout << "intro >> enter \"fastmode\" to create new questions" << endl;
+	cout << "intro >> enter \"learn\" to play" << endl;
 	MODE:
 	cout << "choose mode >> ";
 	cin >> input;
 	if (input == "fastmode") {
-
+		while (true) {
+			saves.open (saves_file_name, std::ios_base::app);
+			cout << "question >> ";
+			cin >> input;
+			saves << "\"" << input << "\"";
+			cout << "answer >> ";
+			cin >> input;
+			saves << " = \"" << input << "\"\n\n";
+			saves.close ();
+		};
+	} else if (input == "learn") {
+		cout << "error >> mode not yet implemented" << endl;
+		exit (1);
 	} else {
 		cout << "error >> no mode named \"" << input << "\"" << endl;
 		goto MODE;
@@ -102,14 +116,7 @@ auto main () -> int {
 	// } while (regex_search (input, matches, pattern));
 	
 	
-	while (true) {
-		cout << "question >> ";
-		cin >> input;
-		saves << "\"" << input << "\"";
-		cout << "answer >> ";
-		cin >> input;
-		saves << " = \"" << input << "\"\n";
-	};
+	
 	// for (; ;) {
 		
 
@@ -118,9 +125,9 @@ auto main () -> int {
 	// 	if constexpr (USE_REGEX) {
 	// 		auto pattern = regex {R"([a-z])"};
 	// 		auto matches = smatch {};
-			if (regex_search (input, matches, pattern)) {
-				cout << "yay" << endl;
-			}
+			// if (regex_search (input, matches, pattern)) {
+			// 	cout << "yay" << endl;
+			// }
 	// 	}
 		
 	// }
