@@ -22,6 +22,10 @@
 
 "Vad gör det fysiska lagret?" = "Det fysiska lagret definierar nätverkets fysiska struktur, mekaniska och elektriska specifikationer."
 
+"Vilket lager ligger protokollet TCP?" = "Transportlagret"
+
+"Vilket lager tillhör switchen och vad agerar den?" = "Den agerar vägväljare på lager två"
+
 # Fysiska lagret
 
 "Vad ansvarar det fysiska lagret för?" = "Det fysiska lagret ansvarar för att transportera bitar och hur dessa skall kodas."
@@ -197,4 +201,20 @@ Multicast address"""
 | preamble | dst address | src address | type | data | CRC |				
 ------------------------------------------------------------
 """
+
+"hur många bytes är en MAC address?" = "6 bytes"
+
+"hur många bitar är en MAC address?" = "48 bitar"
+
+"vad gör första delen i MAC addressen?" = "Talar om tillverkare nätverkskortet har"
+
+"vad gör andra delen i MAC addressen?" = "Ger nätverkskortet en unik address"
+
+"Ethernet är connectionless, vad innebär det?" = "ingen handskakning mellan sändande och mottagande nätverkskort"
+
+"Ethernet är opålitligt, varför det?" = "mottagande nätverkskort skickar inga acks eller nacks till sändaren"
+
+"Ethernet är opålitligt, vad innebär det?" = "gapen fylls av TCP"
+
+
 
