@@ -4,7 +4,7 @@
 
 "Vad står OSI för?" = "Open Systems Interconnection"
 
-"När togs OSI modellen fram?" = 1980
+"När togs OSI modellen fram?" = "1980"
 
 "Vilka tog fram OSI modellen?" = "ISO, internationella standardiseringsorganisationen"
 
@@ -215,6 +215,4 @@ Multicast address"""
 "Ethernet är opålitligt, varför det?" = "mottagande nätverkskort skickar inga acks eller nacks till sändaren"
 
 "Ethernet är opålitligt, vad innebär det?" = "gapen fylls av TCP"
-
-
 
