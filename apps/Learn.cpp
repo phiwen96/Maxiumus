@@ -108,7 +108,7 @@ auto main () -> int {
 	// return dist(engine);
 
 	for (auto i = 0; i < qst.size (); ++i) {
-		auto dist = std::uniform_int_distribution<> {0, qst.size ()};
+		auto dist = std::uniform_int_distribution<> {0, (int) qst.size ()};
 		auto r = dist (engine);
 		auto iter = qst.begin () + r;
 		cout << iter->first << endl;
