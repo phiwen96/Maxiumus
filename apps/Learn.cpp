@@ -6,8 +6,11 @@
 #include <regex>
 #include <sstream>
 #include <signal.h>
+#include <vector>
+#include <utility>
+#include <random>
 
-using std::cout, std::wcout, std::cin, std::wcin, std::endl, std::cerr, std::string, std::wstring, std::string_view, std::getline, std::ifstream, std::ofstream, std::fstream, std::regex, std::wregex, std::smatch, std::wsmatch, std::sregex_iterator, std::wsregex_iterator, std::istreambuf_iterator;
+using std::cout, std::wcout, std::cin, std::wcin, std::endl, std::cerr, std::string, std::wstring, std::string_view, std::vector, std::pair, std::getline, std::ifstream, std::ofstream, std::fstream, std::regex, std::wregex, std::smatch, std::wsmatch, std::sregex_iterator, std::wsregex_iterator, std::istreambuf_iterator;
 using namespace std::filesystem;
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals; 
@@ -80,11 +83,47 @@ auto main () -> int {
 	// auto inp = string {};
 	// getline (cin, inp);
 	// auto patt = regex {R"([åäö]+)"};
+	// auto pattern1 = regex {R"(=)"};
+	// for (auto iter = sregex_iterator {content.begin (), content.end (), pattern1}; iter != sregex_iterator {}; ++iter) {
+	// 	auto iter2 = sregex_iterator {};
+	// 	// cout << "hihihi" << endl;
+	// 	cout << iter -> str () << endl;
+	// }
+
+	auto qst = vector <pair <string, string>> {};
 	pattern = regex {R"(\"+([åäöÅÄÖ,.\(\)\[\]/\-|]*\w*[åäöÅÄÖ,.\(\)\[\]/-|]*\w*\s*\?*)+\"+)"};
 	for (auto iter = sregex_iterator {content.begin (), content.end (), pattern}; iter != sregex_iterator {}; ++iter) {
-		cout << "hihihi" << endl;
-		cout << iter -> str () << endl;
+		qst.push_back ({iter -> str (), (++iter) -> str ()});
+		qst.back().first.erase(0, 1);
+		qst.back().first.pop_back();
+		qst.back().second.erase(0, 1);
+		qst.back().second.pop_back();
+
+		// cout << "hihihi" << endl;
+		// cout << iter -> str () << endl;
 	}
+
+	static thread_local auto engine = std::default_random_engine{std::random_device{}()};
+	
+	// return dist(engine);
+
+	for (auto i = 0; i < qst.size (); ++i) {
+		auto dist = std::uniform_int_distribution<> {0, qst.size ()};
+		auto r = dist (engine);
+		auto iter = qst.begin () + r;
+		cout << iter->first << endl;
+		auto input = string {};
+		getline (cin, input);
+		cout << iter->second << endl << endl;
+		qst.erase (iter);
+		getline (cin, input);
+	}
+
+	// for (auto& i : qst) {
+	// 	cout << i.first << endl;
+	// 	cout << i.second << endl;
+	// }
+
 	// for (auto iter = sregex_iterator {inp.begin (), inp.end (), patt}; iter != sregex_iterator {}; ++iter) {
 	// 	cout << "match! " << iter -> str () << endl;
 	// }
