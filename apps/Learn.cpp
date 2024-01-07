@@ -108,26 +108,17 @@ auto main () -> int {
 		}
 	} else if (input == "learn") {
 		auto knowledge = vector <pair <string, string>> {};
-		pattern = regex {R"(\"+([åäöÅÄÖ,.\(\)\[\]/\-|]*\w*[åäöÅÄÖ,.\(\)\[\]/-|]*\w*\s*\?*)+\"+)"};
-		auto i = 0;
+		pattern = regex {R"(\"{1,3}([åäöÅÄÖ,.\(\)\[\]/\-|]*\w*[åäöÅÄÖ,.\(\)\[\]/-|]*\w*\s*\?*)+\"{1,3})"};
 		for (auto iter = sregex_iterator {content.begin (), content.end (), pattern}; iter != sregex_iterator {}; ++iter) {
-			// cout << iter -> str () << " : " << (++iter)->str () << endl;
 			knowledge.push_back ({iter -> str (), (++iter) -> str ()});
 			knowledge.back().first.erase(0, 1);
 			knowledge.back().first.pop_back();
 			knowledge.back().second.erase(0, 1);
 			knowledge.back().second.pop_back();
-			++i;
 		}
-		// cout << i << endl;
-		// cout << knowledge.size () << endl;
-		// return 0;
 
 		static thread_local auto engine = std::default_random_engine{std::random_device{}()};
 		
-		// for (auto i = 0; i < knowledge.size (); ++i) {
-		// auto const sz = knowledge.size ();
-		// for (auto i = 0; i < sz; ++i)
 		for (auto i = 0; i < knowledge.size (); ++i) {
 			auto dist = std::uniform_int_distribution<> {0, (int) knowledge.size ()};
 			auto rand = dist (engine);
@@ -144,7 +135,7 @@ auto main () -> int {
 			// let the question be if user enter '-'
 			if (input == "-") {
 			
-			} else {
+			} else if (input.length () == 0) {
 				knowledge.erase (iter);
 			}
 		}
