@@ -10,7 +10,7 @@
 
 "Vad gör applikationslagret?" = "Den förser användarna med nätverkstjänster"
 
-"Vad gör presentationslagret?" = "Den ser till att informationen från sändaren blir begriplig för mottagaren."
+"Vad gör presentationslagret?" = "Dän ser till att informationen från sändaren blir begriplig för mottagaren"
 
 "Vad gör sessionslagret?" = "Det initierar kommunikation. Etablerar, upprätthåller och synkroniserar dialog mellan enheter"
 
@@ -64,7 +64,7 @@
 
 "Hur påverkas signalen av distorsion?" = "Signalen ändrar form, så när signalen har färdats en bit så missformas dem."
 
-"Hur kan man motverka distorsion?" = "Med en repeater eller en hubb. Då kan man återskapa signalen innan den blir alldeles förvrängd."
+"Med vad kan man motverka distorsion?" = "Med en repeater eller en hubb. Då kan man återskapa signalen innan den blir alldeles förvrängd."
 
 "Vad är viktigt för att kunna undkomma distorsion?" = "En tillräckligt stark styrka i signalen"
 
@@ -102,6 +102,8 @@
 
 # Datalänk
 
+"Vad är multiplexering?" = "Ett sätt att sända flera signaler samtidigt som en signal över ett medium"
+
 "Vad är lager tvås uppgifter?" = """Identifiera datorer och annan nätverksutrustning på det lokala nätverket.
 Att sköta nätaccess, hur och när man får tillgång till överföringsmediet."""
 
@@ -132,6 +134,8 @@ Addressering"""
 "Hur brukar man hantera fel som sker i ett överföringsmedium med mycket fel?" = "Med omsändningar"
 
 "Hur brukar man hantera fel som sker i överföringsmedium med få fel?" = "Kasta ramen"
+
+"Vad står ARQ för?" = "Automatic repeat request"
 
 "Hur löser man omsändningar?" = "Med automatic repeat request (ARQ), med hjälp av sekvensnummer och acknowledgement (ACK). Med sekvensnummer märker man ramarna som skickas och på så sätt kan mottagaren se om något saknas. Mottagaren skickar ACK med kvitto på vad den fått och på så sätt kan sändaren se om något måste skickas om. "
 
@@ -178,7 +182,7 @@ CSMA/CD (Carrier Sense Multiple Access/Collision Detection)"""
 Broadcast address 
 Multicast address"""
 
-"När används unicast address?" = "Vid kommunikation en till en "
+"När används unicast address?" = "Vid kommunikation en till en"
 
 "När används broadcast address?" = "Vid kommmunikation en till alla"
 
