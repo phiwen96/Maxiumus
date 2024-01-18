@@ -36,7 +36,7 @@ ifeq ($(detected_OS),Darwin)
 	GCC = /opt/homebrew/Cellar/gcc/13.2.0/bin/g++-13
 	CXX_FLAGS += -D MACOS -D FONTS_DIR=\"/System/Library/Fonts/Supplemental\"
 	CXX_LIBS = -L$(LIB_BOOST)/lib -lboost_system -lboost_url -L$(LIB_OPENSSL)/lib -lssl -lcrypto -L/opt/homebrew/lib -L$(LIB_GLFW)/lib -lglfw -L$(VULKAN_SDK)/macOS/lib -lvulkan.1.3.236 -lSDL2 -L/opt/homebrew/Cellar/freetype/2.13.2/lib -lfreetype
-	CXX_INCLUDES += -I$(LIB_GLFW)/include -I$(LIB_BOOST)/include -I$(LIB_OPENSSL)/include -I$(LIB_NLOHMANN) -I$(VULKAN_SDK)/macOS/include
+	CXX_INCLUDES += -I$(LIB_GLFW)/include -I$(LIB_BOOST)/include -I$(LIB_OPENSSL)/include -I$(LIB_NLOHMANN)/include -I$(VULKAN_SDK)/macOS/include
 endif
 ifeq ($(detected_OS),Linux)
 	# LIB_OPENSSL := /usr/include/openssl
@@ -73,7 +73,7 @@ directories := $(foreach dir, $(BUILD_DIRS), $(shell [ -d $(dir) ] || mkdir -p $
 # apps:= main
 tests:= $(TESTS_DST)/Test.WebBrowser#Test.Concepts.Char Test.Crypto.Base64#Test.Crypto.Symmetric.DES # Test.Async Test.App
 # all: $(tests) $(apps)
-all: $(TESTS_DST)/Maximus $(APPS_DST)/Learn
+all: $(TESTS_DST)/Concurrency #$(TESTS_DST)/Maximus $(APPS_DST)/Learn $(APPS_DST)/UseAPI $(APPS_DST)/Tasks
 
 ###################################################################################################
 ############### Modules ###########################################################################
@@ -211,6 +211,25 @@ Maximus_MODULES := $(IMPL_DST)/Console.o $(INT_DST)/Console.o $(Maximus_MODULES)
 
 Maximus_TESTS := $(TESTS_DST)/Console $(Maximus_TESTS)
 
+############### Console ##############################################################################
+
+Concurrency_MODULES := $(IMPL_DST)/Same.o
+
+$(INT_DST)/Concurrency.o: $(INT_SRC)/Concurrency.cpp $(Concurrency_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/Concurrency.o: $(IMPL_SRC)/Concurrency.cpp $(INT_DST)/Concurrency.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+Concurrency_MODULES := $(IMPL_DST)/Concurrency.o $(INT_DST)/Concurrency.o $(Concurrency_MODULES)
+
+$(TESTS_DST)/Concurrency: $(TESTS_SRC)/Concurrency.cpp $(Concurrency_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/Concurrency.o $(INT_DST)/Concurrency.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Concurrency $(Maximus_TESTS)
+
 ############### Net ##############################################################################
 
 Net_MODULES :=
@@ -248,6 +267,12 @@ $(TESTS_DST)/Maximus: $(TESTS_SRC)/Maximus.cpp $(Maximus_MODULES) $(Maximus_TEST
 $(APPS_DST)/Learn: $(APPS_SRC)/Learn.cpp $(Maximus_MODULES) $(Maximus_TESTS) #$(TESTS_DST)/Console $(TESTS_DST)/Bytes $(TESTS_DST)/TLS $(TESTS_DST)/Socket $(TESTS_DST)/Bool
 	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $< $(Maximus_MODULES) $(CXX_LIBS) $(CXX_INCLUDES)
 
+$(APPS_DST)/UseAPI: $(APPS_SRC)/UseAPI.cpp $(Maximus_MODULES) $(Maximus_TESTS) #$(TESTS_DST)/Console $(TESTS_DST)/Bytes $(TESTS_DST)/TLS $(TESTS_DST)/Socket $(TESTS_DST)/Bool
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $< $(Maximus_MODULES) $(CXX_LIBS) $(CXX_INCLUDES)
+
+$(APPS_DST)/Tasks: $(APPS_SRC)/Tasks.cpp $(Maximus_MODULES) $(Maximus_TESTS) #$(TESTS_DST)/Console $(TESTS_DST)/Bytes $(TESTS_DST)/TLS $(TESTS_DST)/Socket $(TESTS_DST)/Bool
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $< $(Maximus_MODULES) $(CXX_LIBS) $(CXX_INCLUDES)
+
 
 clean:
 	@rm -f Vulkan.Pipeline.Cache
@@ -262,6 +287,8 @@ clean:
 	@rm -rf $(BUILD_DIR)
 
 # $(info $$var is [${var}])
+
+# $(info $$Maximus_MODULES is [${Maximus_MODULES}])
 
 
 # Socket_DEPENDENT_MODULES := $(IMPL_DST)/Same.o

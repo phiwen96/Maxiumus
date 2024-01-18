@@ -4,6 +4,7 @@ export module Maximus;
 
 export import Maximus.Bytes;
 export import Maximus.Same;
+export import Maximus.Concurrency;
 
 export using opaque = byte;
 

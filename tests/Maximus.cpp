@@ -59,10 +59,10 @@ auto main (int argc, char** argv) -> int {
 	ProtocolVersion auto pv = uint16_t {0x0304};
 	// using protocol_version = 
 	// std::cout << sizeof (unsigned int) << std::endl;
-	std::cout << toBinaryString ((unsigned int) 255) << std::endl;
+	// std::cout << toBinaryString ((unsigned int) 255) << std::endl;
 	// set_huge (255);
 	// set_huge (256);
 	// std::cout << std::format ("{:b}", 255) << std::endl;
-	aa ();
+	// aa ();
 	return 0;
 }

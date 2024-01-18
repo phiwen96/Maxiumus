@@ -1,10 +1,10 @@
-module;
-#include <iostream>
+// module;
+// #include <iostream>
 module Maximus;
 
-void aa () {
-	std::cout << "hello world" << std::endl;
-}
+// void aa () {
+// 	std::cout << "hello world" << std::endl;
+// }
 
 // template <typename T>
 // struct has_element_type {

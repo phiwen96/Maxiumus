@@ -17,21 +17,6 @@ using namespace std::literals::string_view_literals;
 
 constexpr auto USE_REGEX = false;
 
-
-
-
-// auto try_get_saves (char const* filename) -> ofstream {
-// 	// auto file = ofstream {};
-// 	// // file.open (filename);
-// 	// file.open (filename, std::ios_base::app);
-// 	// if (not file.open ()) {
-// 	// 	cerr << "internal error >> no save file named \"" << filename << "\"" << endl;
-// 	// 	exit (0);
-// 	// }
-	
-// 	return file;
-// }
-
 constexpr auto saves_file_name = "saves.toml";
 auto saves = fstream {};
 
@@ -64,18 +49,20 @@ auto main () -> int {
 		exit (0);
 	}
 
-	auto pattern = regex {R"(\[questions\])"};
-	auto matches = smatch {};
 	auto const content = string {istreambuf_iterator<char> {saves}, istreambuf_iterator<char> {}};
 	saves.close ();
+
+	// Demand "[questions]"
+	// auto pattern = regex {R"(\[questions\])"};
+	// auto matches = smatch {};
 	
-	{
-		auto iter = sregex_iterator {content.begin (), content.end (), pattern};
-		if (iter == sregex_iterator {}) {
-			cerr << "internal error >> no toml table with name \"questions\" found" << endl;
-			exit (1);
-		}
-	}
+	// {
+	// 	auto iter = sregex_iterator {content.begin (), content.end (), pattern};
+	// 	if (iter == sregex_iterator {}) {
+	// 		cerr << "internal error >> no toml table with name \"questions\" found" << endl;
+	// 		exit (1);
+	// 	}
+	// }
 
 	auto input = string {};
 	cout << "Lets Learn!" << endl;
@@ -108,7 +95,7 @@ auto main () -> int {
 		}
 	} else if (input == "learn") {
 		auto knowledge = vector <pair <string, string>> {};
-		pattern = regex {R"(\"{1,3}([åäöÅÄÖ,.\(\)\[\]/\-|]*\w*[åäöÅÄÖ,.\(\)\[\]/-|]*\w*\s*\?*)+\"{1,3})"};
+		auto pattern = regex {R"(\"{1,3}([åäöÅÄÖ,.\(\)\[\]/\-|]*\w*[åäöÅÄÖ,.\(\)\[\]/-|]*\w*\s*\?*)+\"{1,3})"};
 		for (auto iter = sregex_iterator {content.begin (), content.end (), pattern}; iter != sregex_iterator {}; ++iter) {
 			knowledge.push_back ({iter -> str (), (++iter) -> str ()});
 			knowledge.back().first.erase(0, 1);
@@ -117,7 +104,7 @@ auto main () -> int {
 			knowledge.back().second.pop_back();
 		}
 
-		static thread_local auto engine = std::default_random_engine{std::random_device{}()};
+		static thread_local auto engine = std::default_random_engine {std::random_device {} ()};
 		
 		for (auto i = 0; i < knowledge.size (); ++i) {
 			auto dist = std::uniform_int_distribution<> {0, (int) knowledge.size ()};
