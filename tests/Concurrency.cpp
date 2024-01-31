@@ -38,10 +38,21 @@ auto test_0 () -> bool {
 	return true;
 }
 
+
+auto test_1 () -> bool {
+	printf ("Test 1\n");
+	
+	return true;
+}
+
 auto main (int argc, char** argv) -> int {
 	printf ("Testing Concurrency\n");
 	if (not test_0 ()) {
 		printf ("failed test 0\n");
+		exit (1);
+	}
+	if (not test_1 ()) {
+		printf ("failed test 1\n");
 		exit (1);
 	}
 	return 0;

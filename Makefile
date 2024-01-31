@@ -71,9 +71,9 @@ directories := $(foreach dir, $(BUILD_DIRS), $(shell [ -d $(dir) ] || mkdir -p $
 
 
 # apps:= main
-tests:= $(TESTS_DST)/Test.WebBrowser#Test.Concepts.Char Test.Crypto.Base64#Test.Crypto.Symmetric.DES # Test.Async Test.App
+tests:= $(TESTS_DST)/Test.Coro $(TESTS_DST)/Test.WebBrowser#Test.Concepts.Char Test.Crypto.Base64#Test.Crypto.Symmetric.DES # Test.Async Test.App
 # all: $(tests) $(apps)
-all: $(TESTS_DST)/Concurrency #$(TESTS_DST)/Maximus $(APPS_DST)/Learn $(APPS_DST)/UseAPI $(APPS_DST)/Tasks
+all: $(TESTS_DST)/Coro #$(TESTS_DST)/Maximus $(APPS_DST)/Learn $(APPS_DST)/UseAPI $(APPS_DST)/Tasks
 
 ###################################################################################################
 ############### Modules ###########################################################################
@@ -210,6 +210,215 @@ $(TESTS_DST)/Console: $(TESTS_SRC)/Console.cpp $(Console_MODULES)
 Maximus_MODULES := $(IMPL_DST)/Console.o $(INT_DST)/Console.o $(Maximus_MODULES)
 
 Maximus_TESTS := $(TESTS_DST)/Console $(Maximus_TESTS)
+
+############### Any ##############################################################################
+
+Any_MODULES := $(IMPL_DST)/Same.o
+
+$(INT_DST)/Any.o: $(INT_SRC)/Coro/Any.cpp $(Any_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/Any.o: $(IMPL_SRC)/Coro/Any.cpp $(INT_DST)/Any.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+Any_MODULES := $(IMPL_DST)/Any.o $(INT_DST)/Any.o $(Any_MODULES)
+
+$(TESTS_DST)/Any: $(TESTS_SRC)/Coro/Any.cpp $(Any_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/Any.o $(INT_DST)/Any.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Coro/Any $(Maximus_TESTS)
+
+# ############### IsAwaiter ##############################################################################
+
+# IsAwaiter_MODULES := $(IMPL_DST)/Same.o
+
+# $(INT_DST)/IsAwaiter.o: $(INT_SRC)/Coro/IsAwaiter.cpp $(IsAwaiter_MODULES)
+# 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+# $(IMPL_DST)/IsAwaiter.o: $(IMPL_SRC)/Coro/IsAwaiter.cpp $(INT_DST)/IsAwaiter.o
+# 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+# IsAwaiter_MODULES := $(IMPL_DST)/IsAwaiter.o $(INT_DST)/IsAwaiter.o $(IsAwaiter_MODULES)
+
+# $(TESTS_DST)/IsAwaiter: $(TESTS_SRC)/Coro/IsAwaiter.cpp $(IsAwaiter_MODULES)
+# 	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+# Maximus_MODULES := $(IMPL_DST)/IsAwaiter.o $(INT_DST)/IsAwaiter.o $(Maximus_MODULES)
+
+# Maximus_TESTS := $(TESTS_DST)/Coro/IsAwaiter $(Maximus_TESTS)
+
+# ############### Any ##############################################################################
+
+# Any_MODULES := $(IMPL_DST)/Same.o
+
+# $(INT_DST)/Any.o: $(INT_SRC)/Coro/Any.cpp $(Any_MODULES)
+# 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+# $(IMPL_DST)/Any.o: $(IMPL_SRC)/Coro/Any.cpp $(INT_DST)/Any.o
+# 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+# Any_MODULES := $(IMPL_DST)/Any.o $(INT_DST)/Any.o $(Any_MODULES)
+
+# $(TESTS_DST)/Any: $(TESTS_SRC)/Coro/Any.cpp $(Any_MODULES)
+# 	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+# Maximus_MODULES := $(IMPL_DST)/Any.o $(INT_DST)/Any.o $(Maximus_MODULES)
+
+# Maximus_TESTS := $(TESTS_DST)/Coro/Any $(Maximus_TESTS)
+
+############### IsAwaiter ##############################################################################
+
+IsAwaiter_MODULES := $(IMPL_DST)/Same.o
+
+$(INT_DST)/IsAwaiter.o: $(INT_SRC)/Coro/IsAwaiter.cpp $(IsAwaiter_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/IsAwaiter.o: $(IMPL_SRC)/Coro/IsAwaiter.cpp $(INT_DST)/IsAwaiter.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+IsAwaiter_MODULES := $(IMPL_DST)/IsAwaiter.o $(INT_DST)/IsAwaiter.o $(IsAwaiter_MODULES)
+
+$(TESTS_DST)/IsAwaiter: $(TESTS_SRC)/Coro/IsAwaiter.cpp $(IsAwaiter_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/IsAwaiter.o $(INT_DST)/IsAwaiter.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Coro/IsAwaiter $(Maximus_TESTS)
+
+############### GetAwaiter ##############################################################################
+
+GetAwaiter_MODULES := $(IMPL_DST)/IsAwaiter.o $(IMPL_DST)/Any.o $(IMPL_DST)/Same.o
+
+$(INT_DST)/GetAwaiter.o: $(INT_SRC)/Coro/GetAwaiter.cpp $(GetAwaiter_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/GetAwaiter.o: $(IMPL_SRC)/Coro/GetAwaiter.cpp $(INT_DST)/GetAwaiter.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+GetAwaiter_MODULES := $(IMPL_DST)/GetAwaiter.o $(INT_DST)/GetAwaiter.o $(GetAwaiter_MODULES)
+
+$(TESTS_DST)/GetAwaiter: $(TESTS_SRC)/Coro/GetAwaiter.cpp $(GetAwaiter_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/GetAwaiter.o $(INT_DST)/GetAwaiter.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Coro/GetAwaiter $(Maximus_TESTS)
+
+############### AwaitableTraits ##############################################################################
+
+AwaitableTraits_MODULES := $(IMPL_DST)/GetAwaiter.o $(IMPL_DST)/Same.o
+
+$(INT_DST)/AwaitableTraits.o: $(INT_SRC)/Coro/AwaitableTraits.cpp $(AwaitableTraits_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/AwaitableTraits.o: $(IMPL_SRC)/Coro/AwaitableTraits.cpp $(INT_DST)/AwaitableTraits.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+AwaitableTraits_MODULES := $(IMPL_DST)/AwaitableTraits.o $(INT_DST)/AwaitableTraits.o $(AwaitableTraits_MODULES)
+
+$(TESTS_DST)/AwaitableTraits: $(TESTS_SRC)/Coro/AwaitableTraits.cpp $(AwaitableTraits_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/AwaitableTraits.o $(INT_DST)/AwaitableTraits.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Coro/AwaitableTraits $(Maximus_TESTS)
+
+############### BrokenPromise ##############################################################################
+
+BrokenPromise_MODULES := $(IMPL_DST)/Same.o
+
+$(INT_DST)/BrokenPromise.o: $(INT_SRC)/Coro/BrokenPromise.cpp $(BrokenPromise_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/BrokenPromise.o: $(IMPL_SRC)/Coro/BrokenPromise.cpp $(INT_DST)/BrokenPromise.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+BrokenPromise_MODULES := $(IMPL_DST)/BrokenPromise.o $(INT_DST)/BrokenPromise.o $(BrokenPromise_MODULES)
+
+$(TESTS_DST)/BrokenPromise: $(TESTS_SRC)/Coro/BrokenPromise.cpp $(BrokenPromise_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/BrokenPromise.o $(INT_DST)/BrokenPromise.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Coro/BrokenPromise $(Maximus_TESTS)
+
+############### Config ##############################################################################
+
+# Config_MODULES := $(IMPL_DST)/Same.o
+
+# $(INT_DST)/Config.o: $(INT_SRC)/Coro/Config.cpp $(Config_MODULES)
+# 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+# $(IMPL_DST)/Config.o: $(IMPL_SRC)/Coro/Config.cpp $(INT_DST)/Config.o
+# 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+# Config_MODULES := $(IMPL_DST)/Config.o $(INT_DST)/Config.o $(Config_MODULES)
+
+# $(TESTS_DST)/Config: $(TESTS_SRC)/Coro/Config.cpp $(Config_MODULES)
+# 	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+# Maximus_MODULES := $(IMPL_DST)/Config.o $(INT_DST)/Config.o $(Maximus_MODULES)
+
+# Maximus_TESTS := $(TESTS_DST)/Coro/Config $(Maximus_TESTS)
+
+############### RemoveRValueReference ##############################################################################
+
+RemoveRValueReference_MODULES := $(IMPL_DST)/Same.o
+
+$(INT_DST)/RemoveRValueReference.o: $(INT_SRC)/Coro/RemoveRValueReference.cpp $(RemoveRValueReference_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/RemoveRValueReference.o: $(IMPL_SRC)/Coro/RemoveRValueReference.cpp $(INT_DST)/RemoveRValueReference.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+RemoveRValueReference_MODULES := $(IMPL_DST)/RemoveRValueReference.o $(INT_DST)/RemoveRValueReference.o $(RemoveRValueReference_MODULES)
+
+$(TESTS_DST)/RemoveRValueReference: $(TESTS_SRC)/Coro/RemoveRValueReference.cpp $(RemoveRValueReference_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/RemoveRValueReference.o $(INT_DST)/RemoveRValueReference.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Coro/RemoveRValueReference $(Maximus_TESTS)
+
+############### Task ##############################################################################
+
+Task_MODULES := $(IMPL_DST)/RemoveRValueReference.o $(IMPL_DST)/BrokenPromise.o $(IMPL_DST)/AwaitableTraits.o $(IMPL_DST)/Same.o
+
+$(INT_DST)/Task.o: $(INT_SRC)/Task.cpp $(Task_MODULES) $(INT_SRC)/Coro/Config.hpp
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/Task.o: $(IMPL_SRC)/Task.cpp $(INT_DST)/Task.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+Task_MODULES := $(IMPL_DST)/Task.o $(INT_DST)/Task.o $(Task_MODULES)
+
+$(TESTS_DST)/Task: $(TESTS_SRC)/Task.cpp $(Task_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/Task.o $(INT_DST)/Task.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Task $(Maximus_TESTS)
+
+############### Coro ##############################################################################
+
+Coro_MODULES := $(IMPL_DST)/Task.o $(IMPL_DST)/Same.o
+
+$(INT_DST)/Coro.o: $(INT_SRC)/Coro.cpp $(Coro_MODULES)
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/Coro.o: $(IMPL_SRC)/Coro.cpp $(INT_DST)/Coro.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+Coro_MODULES := $(IMPL_DST)/Coro.o $(INT_DST)/Coro.o $(Coro_MODULES)
+
+$(TESTS_DST)/Coro: $(TESTS_SRC)/Coro.cpp $(Coro_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/Coro.o $(INT_DST)/Coro.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Coro $(Maximus_TESTS)
 
 ############### Console ##############################################################################
 

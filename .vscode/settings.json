@@ -74,6 +74,7 @@
 		"numeric": "cpp",
 		"random": "cpp",
 		"queue": "cpp",
-		"coroutine": "cpp"
+		"coroutine": "cpp",
+		"thread": "cpp"
 	}
 }
