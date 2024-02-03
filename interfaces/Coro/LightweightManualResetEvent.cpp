@@ -10,13 +10,13 @@ module;
 // #include <condition_variable>
 // #endif
 export module Maximus.Coro.LightweightManualResetEvent;
-// import <condition_variable>;
-// import <mutex>;
+import <condition_variable>;
+import <mutex>;
 
 
 
 
-		export template <typename mutex, typename condition_variable>
+		export template <typename mutex = std::mutex, typename condition_variable = std::condition_variable>
 		class lightweight_manual_reset_event
 		{
 		public:
