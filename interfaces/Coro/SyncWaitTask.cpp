@@ -2,31 +2,37 @@ module;
 #include "Config.hpp"
 export module Maximus.Coro.SyncWaitTask;
 
-import Maximus.Coro.AwaitableTraits;
-import Maximus.Coro.LightweightManualResetEvent;
-
 import <coroutine>;
 import <cassert>;
 import <exception>;
 import <utility>;
+import <mutex>;
+import <condition_variable>;
+
+import Maximus.Coro.AwaitableTraits;
+import Maximus.Coro.LightweightManualResetEvent;
+
+// import <condition_variable>;
+// import <type_traits>;
+// import <mutex>;
 
 
-		export template<typename RESULT, typename condition_variable>
-		class sync_wait_task;
+		// export template<typename RESULT>
+		// class sync_wait_task;
 
-		export template<typename RESULT, typename condition_variable>
-		class sync_wait_task_promise final
+		export template<typename RESULT>
+		class sync_wait_task_promise //final
 		{
-			using coroutine_handle_t = std::coroutine_handle<sync_wait_task_promise<RESULT, condition_variable>>;
+			using coroutine_handle_t = std::coroutine_handle<sync_wait_task_promise<RESULT>>;
 
-// 		public:
+		public:
 
 			using reference = RESULT&&;
 
 			sync_wait_task_promise() noexcept
 			{}
 
-			void start(lightweight_manual_reset_event <condition_variable> & event)
+			void start(lightweight_manual_reset_event <std::mutex, std::condition_variable> & event)
 			{
 				m_event = &event;
 				coroutine_handle_t::from_promise(*this).resume();
@@ -61,38 +67,7 @@ import <utility>;
 				return completion_notifier{};
 			}
 
-// // #if CPPCORO_COMPILER_MSVC
-// // 			// HACK: This is needed to work around a bug in MSVC 2017.7/2017.8.
-// // 			// See comment in make_sync_wait_task below.
-// // 			template<typename Awaitable>
-// // 			Awaitable&& await_transform(Awaitable&& awaitable)
-// // 			{
-// // 				return static_cast<Awaitable&&>(awaitable);
-// // 			}
 
-// // 			struct get_promise_t {};
-// // 			static constexpr get_promise_t get_promise = {};
-
-// // 			auto await_transform(get_promise_t)
-// // 			{
-// // 				class awaiter
-// // 				{
-// // 				public:
-// // 					awaiter(sync_wait_task_promise* promise) noexcept : m_promise(promise) {}
-// // 					bool await_ready() noexcept {
-// // 						return true;
-// // 					}
-// // 					void await_suspend(std::coroutine_handle<>) noexcept {}
-// // 					sync_wait_task_promise& await_resume() noexcept
-// // 					{
-// // 						return *m_promise;
-// // 					}
-// // 				private:
-// // 					sync_wait_task_promise* m_promise;
-// // 				};
-// // 				return awaiter{ this };
-// // 			}
-// // #endif
 
 			auto yield_value(reference result) noexcept
 			{
@@ -124,23 +99,23 @@ import <utility>;
 
 		private:
 
-			lightweight_manual_reset_event <condition_variable> * m_event;
+			lightweight_manual_reset_event <std::mutex, std::condition_variable> * m_event;
 			std::remove_reference_t<RESULT>* m_result;
 			std::exception_ptr m_exception;
 
 		};
 
-		export template<typename condition_variable>
-		class sync_wait_task_promise<void, condition_variable>
+		export template <>
+		class sync_wait_task_promise<void>
 		{
-			using coroutine_handle_t = std::coroutine_handle<sync_wait_task_promise<void, condition_variable>>;
+			using coroutine_handle_t = std::coroutine_handle<sync_wait_task_promise<void>>;
 
 		public:
 
 			sync_wait_task_promise() noexcept
 			{}
 
-			void start(lightweight_manual_reset_event <condition_variable> & event)
+			void start(lightweight_manual_reset_event <std::mutex, std::condition_variable> & event)
 			{
 				m_event = &event;
 				coroutine_handle_t::from_promise(*this).resume();
@@ -192,17 +167,17 @@ import <utility>;
 
 		private:
 
-			lightweight_manual_reset_event <condition_variable> * m_event;
+			lightweight_manual_reset_event <std::mutex, std::condition_variable> * m_event;
 			std::exception_ptr m_exception;
 
 		};
 
-		export template<typename RESULT, typename condition_variable>
-		class sync_wait_task final
+		export template<typename RESULT>
+		class sync_wait_task //final
 		{
 		public:
 
-			using promise_type = sync_wait_task_promise<RESULT, condition_variable>;
+			using promise_type = sync_wait_task_promise<RESULT>;
 
 			using coroutine_handle_t = std::coroutine_handle<promise_type>;
 
@@ -222,7 +197,7 @@ import <utility>;
 			sync_wait_task(const sync_wait_task&) = delete;
 			sync_wait_task& operator=(const sync_wait_task&) = delete;
 
-			void start(lightweight_manual_reset_event <condition_variable> & event) noexcept
+			void start(lightweight_manual_reset_event <std::mutex, std::condition_variable> & event) noexcept
 			{
 				m_coroutine.promise().start(event);
 			}
@@ -238,43 +213,12 @@ import <utility>;
 
 		};
 
-#if CPPCORO_COMPILER_MSVC
-		// HACK: Work around bug in MSVC where passing a parameter by universal reference
-		// results in an error when passed a move-only type, complaining that the copy-constructor
-		// has been deleted. The parameter should be passed by reference and the compiler should
-		// notcalling the copy-constructor for the argument
-		template<
-			typename AWAITABLE,
-			typename RESULT = typename cppcoro::awaitable_traits<AWAITABLE&&>::await_result_t,
-			std::enable_if_t<!std::is_void_v<RESULT>, int> = 0>
-		sync_wait_task<RESULT> make_sync_wait_task(AWAITABLE& awaitable)
-		{
-			// HACK: Workaround another bug in MSVC where the expression 'co_yield co_await x' seems
-			// to completely ignore the co_yield an never calls promise.yield_value().
-			// The coroutine seems to be resuming the 'co_await' after the 'co_yield'
-			// rather than before the 'co_yield'.
-			// This bug is present in VS 2017.7 and VS 2017.8.
-			auto& promise = co_await sync_wait_task_promise<RESULT>::get_promise;
-			co_await promise.yield_value(co_await std::forward<AWAITABLE>(awaitable));
 
-			//co_yield co_await std::forward<AWAITABLE>(awaitable);
-		}
-
-		template<
-			typename AWAITABLE,
-			typename RESULT = typename cppcoro::awaitable_traits<AWAITABLE&&>::await_result_t,
-			std::enable_if_t<std::is_void_v<RESULT>, int> = 0>
-		sync_wait_task<void> make_sync_wait_task(AWAITABLE& awaitable)
-		{
-			co_await static_cast<AWAITABLE&&>(awaitable);
-		}
-#else
 		export template<
 			typename AWAITABLE,
 			typename RESULT = typename awaitable_traits<AWAITABLE&&>::await_result_t,
-			typename condition_variable,
 			std::enable_if_t<!std::is_void_v<RESULT>, int> = 0>
-		sync_wait_task<RESULT, condition_variable> make_sync_wait_task(AWAITABLE&& awaitable)
+		sync_wait_task<RESULT> make_sync_wait_task(AWAITABLE&& awaitable)
 		{
 			co_yield co_await std::forward<AWAITABLE>(awaitable);
 		}
@@ -282,11 +226,10 @@ import <utility>;
 		export template<
 			typename AWAITABLE,
 			typename RESULT = typename awaitable_traits<AWAITABLE&&>::await_result_t,
-			typename condition_variable,
 			std::enable_if_t<std::is_void_v<RESULT>, int> = 0>
-		sync_wait_task<void, condition_variable> make_sync_wait_task(AWAITABLE&& awaitable)
+		sync_wait_task<void> make_sync_wait_task(AWAITABLE&& awaitable)
 		{
 			co_await std::forward<AWAITABLE>(awaitable);
 		}
-#endif
+
 	

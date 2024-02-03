@@ -4,10 +4,7 @@ import <type_traits>;
 import <coroutine>;
 import <utility>;
 
-namespace cppcoro
-{
-	namespace detail
-	{
+
 		export template<typename T>
 		struct is_coroutine_handle
 			: std::false_type
@@ -42,8 +39,6 @@ namespace cppcoro
 			decltype(std::declval<T>().await_resume())>> :
 			std::conjunction<
 				std::is_constructible<bool, decltype(std::declval<T>().await_ready())>,
-				detail::is_valid_await_suspend_return_value<
+				is_valid_await_suspend_return_value<
 					decltype(std::declval<T>().await_suspend(std::declval<std::coroutine_handle<>>()))>>
 		{};
-	}
-}

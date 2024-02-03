@@ -1,7 +1,6 @@
 export module Maximus.Coro.BrokenPromise;
 import <stdexcept>;
-namespace cppcoro
-{
+
 	/// \brief
 	/// Exception thrown when you attempt to retrieve the result of
 	/// a task that has been detached from its promise/coroutine.
@@ -12,4 +11,3 @@ namespace cppcoro
 			: std::logic_error("broken promise")
 		{}
 	};
-}

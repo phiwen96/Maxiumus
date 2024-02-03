@@ -76,6 +76,7 @@
 		"queue": "cpp",
 		"coroutine": "cpp",
 		"thread": "cpp",
-		"cassert": "cpp"
+		"cassert": "cpp",
+		"condition_variable": "cpp"
 	}
 }

@@ -95,7 +95,7 @@ BUILD_DIRS := $(foreach dir, $(_BUILD_DIRS), $(addprefix $(BUILD_DIR)/, $(dir)))
 
 directories := $(foreach dir, $(BUILD_DIRS), $(shell [ -d $(dir) ] || mkdir -p $(dir)))
 
-_STD_MODULES := atomic.gcm mutex.gcm cstdint.gcm utility.gcm exception.gcm cassert.gcm coroutine.gcm type_traits.gcm stdexcept.gcm
+_STD_MODULES := atomic.gcm mutex.gcm cstdint.gcm utility.gcm exception.gcm cassert.gcm coroutine.gcm type_traits.gcm stdexcept.gcm condition_variable.gcm
 STD_MODULES := $(foreach dir, $(_STD_MODULES), $(addprefix gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/, $(dir)))
 
 # apps:= main
@@ -129,6 +129,9 @@ gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/type_traits.gcm:
 
 gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/stdexcept.gcm:
 	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header stdexcept
+
+gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/condition_variable.gcm:
+	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header condition_variable
 
 
 

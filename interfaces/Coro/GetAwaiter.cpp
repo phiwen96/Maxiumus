@@ -1,13 +1,14 @@
 export module Maximus.Coro.GetAwaiter;
 
+import <type_traits>;
+
 import Maximus.Coro.IsAwaiter;
 import Maximus.Coro.Any;
-import <type_traits>;
+
 
 // namespace cppcoro
 // {
-	namespace detail
-	{
+
 		template<typename T>
 		auto get_awaiter_impl(T&& value, int)
 			noexcept(noexcept(static_cast<T&&>(value).operator co_await()))
@@ -26,18 +27,18 @@ import <type_traits>;
 
 		export template<
 			typename T,
-			std::enable_if_t<cppcoro::detail::is_awaiter<T&&>::value, int> = 0>
-		T&& get_awaiter_impl(T&& value, cppcoro::detail::any) noexcept
+			std::enable_if_t<is_awaiter<T&&>::value, int> = 0>
+		T&& get_awaiter_impl(T&& value, any) noexcept
 		{
 			return static_cast<T&&>(value);
 		}
 
 		export template<typename T>
 		auto get_awaiter(T&& value)
-			noexcept(noexcept(detail::get_awaiter_impl(static_cast<T&&>(value), 123)))
-			-> decltype(detail::get_awaiter_impl(static_cast<T&&>(value), 123))
+			noexcept(noexcept(get_awaiter_impl(static_cast<T&&>(value), 123)))
+			-> decltype(get_awaiter_impl(static_cast<T&&>(value), 123))
 		{
-			return detail::get_awaiter_impl(static_cast<T&&>(value), 123);
+			return get_awaiter_impl(static_cast<T&&>(value), 123);
 		}
-	}
+	
 // }
