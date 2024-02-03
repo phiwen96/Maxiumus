@@ -11,12 +11,17 @@ CXX_MODULES = -fmodules-ts -fmodules -fbuiltin-module-map -fimplicit-modules -fi
 
 CXX_APP_FLAGS = -lpthread 
 
+USE_GLFW := FALSE
+USE_VULKAN := FALSE
+USE_BOOST := FALSE
+USE_OPENSSL := FALSE
+USE_NLOHMANN := FALSE
 
 ifeq ($(OS),Windows_NT) 
     detected_OS := Windows
 else
     detected_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
-	CXX_INCLUDES = -I/usr/local/include -I/opt/homebrew/Cellar/glm/0.9.9.8/include -I/opt/homebrew/Cellar/freetype/2.12.1/include/freetype2 #-I/Users/philipwenkel/VulkanSDK/1.3.216.0/macOS/include
+	# CXX_INCLUDES = -I/usr/local/include -I/opt/homebrew/Cellar/glm/0.9.9.8/include -I/opt/homebrew/Cellar/freetype/2.12.1/include/freetype2 #-I/Users/philipwenkel/VulkanSDK/1.3.216.0/macOS/include
 endif
 ifeq ($(detected_OS),Windows)
 	GCC = g++
@@ -26,6 +31,28 @@ ifeq ($(detected_OS),Windows)
 	CXX_INCLUDES += -I$(VULKAN_DIR)\Include
 endif
 ifeq ($(detected_OS),Darwin)
+	
+	ifeq ($(USE_GLFW), TRUE) 
+		# $(info $$USE_GLFW is [${USE_GLFW}])
+		CXX_LIBS += -L$(LIB_GLFW)/lib -lglfw 
+		CXX_INCLUDES += -I$(LIB_GLFW)/include 
+	endif
+	ifeq ($(USE_VULKAN), TRUE)
+		CXX_LIBS += -L$(VULKAN_SDK)/macOS/lib -lvulkan.1.3.236 
+		CXX_INCLUDES += -I$(VULKAN_SDK)/macOS/include 
+	endif
+	ifeq ($(USE_BOOST), TRUE)
+		CXX_LIBS += -L$(LIB_BOOST)/lib -lboost_system -lboost_url 
+		CXX_INCLUDES += -I$(LIB_BOOST)/include 
+	endif
+	ifeq ($(USE_OPENSSL), TRUE)
+		CXX_LIBS += -L$(LIB_OPENSSL)/lib -lssl -lcrypto
+		CXX_INCLUDES += -I$(LIB_OPENSSL)/include
+	endif
+	ifeq ($(USE_NLOHMANN), TRUE)
+		CXX_INCLUDES += -I$(LIB_NLOHMANN)/include
+	endif
+	
 	VULKAN_VERSION = 1.3.236.0
 	VULKAN_SDK = /Users/philipwenkel/VulkanSDK/$(VULKAN_VERSION)
 	LIB_NLOHMANN := /opt/homebrew/Cellar/nlohmann-json/3.11.3
@@ -34,9 +61,8 @@ ifeq ($(detected_OS),Darwin)
 	LIB_GLFW := /opt/homebrew/Cellar/glfw/3.3.9
 	GLSLC_COMPILER = $(VULKAN_SDK)/macOS/bin/glslc
 	GCC = /opt/homebrew/Cellar/gcc/13.2.0/bin/g++-13
-	CXX_FLAGS += -D MACOS -D FONTS_DIR=\"/System/Library/Fonts/Supplemental\"
-	CXX_LIBS = -L$(LIB_BOOST)/lib -lboost_system -lboost_url -L$(LIB_OPENSSL)/lib -lssl -lcrypto -L/opt/homebrew/lib -L$(LIB_GLFW)/lib -lglfw -L$(VULKAN_SDK)/macOS/lib -lvulkan.1.3.236 -lSDL2 -L/opt/homebrew/Cellar/freetype/2.13.2/lib -lfreetype
-	CXX_INCLUDES += -I$(LIB_GLFW)/include -I$(LIB_BOOST)/include -I$(LIB_OPENSSL)/include -I$(LIB_NLOHMANN)/include -I$(VULKAN_SDK)/macOS/include
+	CXX_FLAGS += -D MACOS #-D FONTS_DIR=\"/System/Library/Fonts/Supplemental\"
+	# CXX_LIBS = -L/opt/homebrew/lib
 endif
 ifeq ($(detected_OS),Linux)
 	# LIB_OPENSSL := /usr/include/openssl
@@ -73,7 +99,8 @@ directories := $(foreach dir, $(BUILD_DIRS), $(shell [ -d $(dir) ] || mkdir -p $
 # apps:= main
 tests:= $(TESTS_DST)/Test.Coro $(TESTS_DST)/Test.WebBrowser#Test.Concepts.Char Test.Crypto.Base64#Test.Crypto.Symmetric.DES # Test.Async Test.App
 # all: $(tests) $(apps)
-all: $(TESTS_DST)/Coro #$(TESTS_DST)/Maximus $(APPS_DST)/Learn $(APPS_DST)/UseAPI $(APPS_DST)/Tasks
+all: $(TESTS_DST)/SyncWaitTask #$(TESTS_DST)/Task $(TESTS_DST)/Coro #$(TESTS_DST)/Maximus $(APPS_DST)/Learn $(APPS_DST)/UseAPI $(APPS_DST)/Tasks
+
 
 ###################################################################################################
 ############### Modules ###########################################################################
@@ -382,24 +409,62 @@ Maximus_MODULES := $(IMPL_DST)/RemoveRValueReference.o $(INT_DST)/RemoveRValueRe
 
 Maximus_TESTS := $(TESTS_DST)/Coro/RemoveRValueReference $(Maximus_TESTS)
 
-############### Task ##############################################################################
+############### LightweightManualResetEvent ##############################################################################
 
-Task_MODULES := $(IMPL_DST)/RemoveRValueReference.o $(IMPL_DST)/BrokenPromise.o $(IMPL_DST)/AwaitableTraits.o $(IMPL_DST)/Same.o
+LightweightManualResetEvent_MODULES := $(IMPL_DST)/Same.o
 
-$(INT_DST)/Task.o: $(INT_SRC)/Task.cpp $(Task_MODULES) $(INT_SRC)/Coro/Config.hpp
+$(INT_DST)/LightweightManualResetEvent.o: $(INT_SRC)/Coro/LightweightManualResetEvent.cpp $(LightweightManualResetEvent_MODULES) $(INT_SRC)/Coro/Config.hpp
 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
 
-$(IMPL_DST)/Task.o: $(IMPL_SRC)/Task.cpp $(INT_DST)/Task.o
+$(IMPL_DST)/LightweightManualResetEvent.o: $(IMPL_SRC)/Coro/LightweightManualResetEvent.cpp $(INT_DST)/LightweightManualResetEvent.o
 	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
 
-Task_MODULES := $(IMPL_DST)/Task.o $(INT_DST)/Task.o $(Task_MODULES)
+LightweightManualResetEvent_MODULES := $(IMPL_DST)/LightweightManualResetEvent.o $(INT_DST)/LightweightManualResetEvent.o $(LightweightManualResetEvent_MODULES)
 
-$(TESTS_DST)/Task: $(TESTS_SRC)/Task.cpp $(Task_MODULES)
+$(TESTS_DST)/LightweightManualResetEvent: $(TESTS_SRC)/Coro/LightweightManualResetEvent.cpp $(LightweightManualResetEvent_MODULES)
 	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
 
-Maximus_MODULES := $(IMPL_DST)/Task.o $(INT_DST)/Task.o $(Maximus_MODULES)
+Maximus_MODULES := $(IMPL_DST)/LightweightManualResetEvent.o $(INT_DST)/LightweightManualResetEvent.o $(Maximus_MODULES)
 
-Maximus_TESTS := $(TESTS_DST)/Task $(Maximus_TESTS)
+Maximus_TESTS := $(TESTS_DST)/LightweightManualResetEvent $(Maximus_TESTS)
+
+############### SyncWaitTask ##############################################################################
+
+SyncWaitTask_MODULES := $(IMPL_DST)/LightweightManualResetEvent.o $(IMPL_DST)/AwaitableTraits.o $(IMPL_DST)/Same.o
+
+$(INT_DST)/SyncWaitTask.o: $(INT_SRC)/Coro/SyncWaitTask.cpp $(SyncWaitTask_MODULES) $(INT_SRC)/Coro/Config.hpp
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/SyncWaitTask.o: $(IMPL_SRC)/Coro/SyncWaitTask.cpp $(INT_DST)/SyncWaitTask.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+SyncWaitTask_MODULES := $(IMPL_DST)/SyncWaitTask.o $(INT_DST)/SyncWaitTask.o $(SyncWaitTask_MODULES)
+
+$(TESTS_DST)/SyncWaitTask: $(TESTS_SRC)/Coro/SyncWaitTask.cpp $(SyncWaitTask_MODULES) $(INT_SRC)/Coro/Config.hpp
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/SyncWaitTask.o $(INT_DST)/SyncWaitTask.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/SyncWaitTask $(Maximus_TESTS)
+
+############### SyncWait ##############################################################################
+
+SyncWait_MODULES := $(IMPL_DST)/SyncWaitTask.o $(IMPL_DST)/AwaitableTraits.o $(IMPL_DST)/LightweightManualResetEvent.o $(IMPL_DST)/Same.o
+
+$(INT_DST)/SyncWait.o: $(INT_SRC)/Coro/SyncWait.cpp $(SyncWait_MODULES) $(INT_SRC)/Coro/Config.hpp
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/SyncWait.o: $(IMPL_SRC)/Coro/SyncWait.cpp $(INT_DST)/SyncWait.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+SyncWait_MODULES := $(IMPL_DST)/SyncWait.o $(INT_DST)/SyncWait.o $(SyncWait_MODULES)
+
+$(TESTS_DST)/SyncWait: $(TESTS_SRC)/Coro/SyncWait.cpp $(SyncWait_MODULES)
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/SyncWait.o $(INT_DST)/SyncWait.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/SyncWait $(Maximus_TESTS)
 
 ############### Coro ##############################################################################
 
@@ -419,6 +484,25 @@ $(TESTS_DST)/Coro: $(TESTS_SRC)/Coro.cpp $(Coro_MODULES)
 Maximus_MODULES := $(IMPL_DST)/Coro.o $(INT_DST)/Coro.o $(Maximus_MODULES)
 
 Maximus_TESTS := $(TESTS_DST)/Coro $(Maximus_TESTS)
+
+############### Task ##############################################################################
+
+Task_MODULES := $(IMPL_DST)/RemoveRValueReference.o $(IMPL_DST)/BrokenPromise.o $(IMPL_DST)/AwaitableTraits.o $(IMPL_DST)/Same.o
+
+$(INT_DST)/Task.o: $(INT_SRC)/Task.cpp $(Task_MODULES) $(INT_SRC)/Coro/Config.hpp
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+$(IMPL_DST)/Task.o: $(IMPL_SRC)/Task.cpp $(INT_DST)/Task.o
+	$(GCC) $(CXX_FLAGS) -c $< $(CXX_INCLUDES) -o $@
+
+Task_MODULES := $(IMPL_DST)/Task.o $(INT_DST)/Task.o $(Task_MODULES)
+
+$(TESTS_DST)/Task: $(TESTS_SRC)/Task.cpp $(Task_MODULES) $(IMPL_DST)/SyncWait.o
+	$(GCC) $(CXX_FLAGS) -Werror=unused-result -o $@ $^ $(CXX_LIBS) $(CXX_INCLUDES)
+
+Maximus_MODULES := $(IMPL_DST)/Task.o $(INT_DST)/Task.o $(Maximus_MODULES)
+
+Maximus_TESTS := $(TESTS_DST)/Task $(Maximus_TESTS)
 
 ############### Console ##############################################################################
 

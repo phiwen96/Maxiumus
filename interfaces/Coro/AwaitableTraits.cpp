@@ -5,8 +5,6 @@ export module Maximus.Coro.AwaitableTraits;
 
 import Maximus.Coro.GetAwaiter;
 
-namespace cppcoro
-{
 	export template<typename T, typename = void>
 	struct awaitable_traits
 	{};
@@ -18,4 +16,3 @@ namespace cppcoro
 
 		using await_result_t = decltype(std::declval<awaiter_t>().await_resume());
 	};
-}

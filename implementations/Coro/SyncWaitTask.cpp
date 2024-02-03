@@ -1,0 +1,2 @@
+module Maximus.Coro.SyncWaitTask;
+

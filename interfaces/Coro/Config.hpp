@@ -1,7 +1,7 @@
 // export module Maximus.Coro.Config;
 
-#ifndef CPPCORO_CONFIG_HPP_INCLUDED
-#define CPPCORO_CONFIG_HPP_INCLUDED
+// #ifndef CPPCORO_CONFIG_HPP_INCLUDED
+// #define CPPCORO_CONFIG_HPP_INCLUDED
 
 /////////////////////////////////////////////////////////////////////////////
 // Compiler Detection
@@ -148,4 +148,4 @@
 # define CPPCORO_CPU_CACHE_LINE 64
 #endif
 
-#endif
+// #endif

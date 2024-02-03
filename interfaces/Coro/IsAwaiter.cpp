@@ -1,18 +1,19 @@
 module;
 #include <type_traits>
 #include <coroutine>
+#include <utility>
 export module Maximus.Coro.IsAwaiter;
 
 namespace cppcoro
 {
 	namespace detail
 	{
-		template<typename T>
+		export template<typename T>
 		struct is_coroutine_handle
 			: std::false_type
 		{};
 
-		template<typename PROMISE>
+		export template<typename PROMISE>
 		struct is_coroutine_handle<std::coroutine_handle<PROMISE>>
 			: std::true_type
 		{};
@@ -20,7 +21,7 @@ namespace cppcoro
 		// NOTE: We're accepting a return value of coroutine_handle<P> here
 		// which is an extension supported by Clang which is not yet part of
 		// the C++ coroutines TS.
-		template<typename T>
+		export template<typename T>
 		struct is_valid_await_suspend_return_value : std::disjunction<
 			std::is_void<T>,
 			std::is_same<T, bool>,
