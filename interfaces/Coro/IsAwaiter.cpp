@@ -1,8 +1,8 @@
-module;
-#include <type_traits>
-#include <coroutine>
-#include <utility>
 export module Maximus.Coro.IsAwaiter;
+
+import <type_traits>;
+import <coroutine>;
+import <utility>;
 
 namespace cppcoro
 {

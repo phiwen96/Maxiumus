@@ -1,9 +1,8 @@
-module;
-#include <type_traits>
 export module Maximus.Coro.GetAwaiter;
 
 import Maximus.Coro.IsAwaiter;
 import Maximus.Coro.Any;
+import <type_traits>;
 
 // namespace cppcoro
 // {

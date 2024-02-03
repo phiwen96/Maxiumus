@@ -6,10 +6,11 @@ module;
 // #elif CPPCORO_OS_WINNT
 // # include <cppcoro/detail/win32.hpp>
 // #else
-#include <mutex>
+// #include <mutex>
 // #include <condition_variable>
 // #endif
 export module Maximus.Coro.LightweightManualResetEvent;
+import <mutex>;
 
 
 

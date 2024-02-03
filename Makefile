@@ -95,12 +95,47 @@ BUILD_DIRS := $(foreach dir, $(_BUILD_DIRS), $(addprefix $(BUILD_DIR)/, $(dir)))
 
 directories := $(foreach dir, $(BUILD_DIRS), $(shell [ -d $(dir) ] || mkdir -p $(dir)))
 
+_STD_MODULES := atomic.gcm mutex.gcm cstdint.gcm utility.gcm exception.gcm cassert.gcm coroutine.gcm type_traits.gcm stdexcept.gcm
+STD_MODULES := $(foreach dir, $(_STD_MODULES), $(addprefix gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/, $(dir)))
 
 # apps:= main
 tests:= $(TESTS_DST)/Test.Coro $(TESTS_DST)/Test.WebBrowser#Test.Concepts.Char Test.Crypto.Base64#Test.Crypto.Symmetric.DES # Test.Async Test.App
 # all: $(tests) $(apps)
-all: $(TESTS_DST)/SyncWaitTask #$(TESTS_DST)/Task $(TESTS_DST)/Coro #$(TESTS_DST)/Maximus $(APPS_DST)/Learn $(APPS_DST)/UseAPI $(APPS_DST)/Tasks
+all: $(STD_MODULES) $(TESTS_DST)/SyncWait  #$(std_headers)#$(TESTS_DST)/Task $(TESTS_DST)/Coro #$(TESTS_DST)/Maximus $(APPS_DST)/Learn $(APPS_DST)/UseAPI $(APPS_DST)/Tasks
 
+gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/atomic.gcm:
+	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header atomic
+
+gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/mutex.gcm:
+	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header mutex
+
+gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/cstdint.gcm:
+	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header cstdint
+
+gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/utility.gcm:
+	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header utility
+
+gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/exception.gcm:
+	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header exception
+
+gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/cassert.gcm:
+	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header cassert
+
+gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/coroutine.gcm:
+	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header coroutine
+
+gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/type_traits.gcm:
+	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header type_traits
+
+gcm.cache/opt/homebrew/Cellar/gcc/13.2.0/include/c++/13/stdexcept.gcm:
+	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header stdexcept
+
+
+
+
+std_headers:
+	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header atomic
+	$(GCC) -std=c++2b -fmodules-ts -x c++-system-header mutex
 
 ###################################################################################################
 ############### Modules ###########################################################################

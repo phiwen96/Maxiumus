@@ -1,14 +1,14 @@
 module;
 #include "Config.hpp"
-#include <coroutine>
-#include <cassert>
-#include <exception>
-#include <utility>
-// #include <type_traits>
 export module Maximus.Coro.SyncWaitTask;
 
 import Maximus.Coro.AwaitableTraits;
 import Maximus.Coro.LightweightManualResetEvent;
+
+import <coroutine>;
+import <cassert>;
+import <exception>;
+import <utility>;
 
 
 		export template<typename RESULT, typename condition_variable>

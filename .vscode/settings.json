@@ -75,6 +75,7 @@
 		"random": "cpp",
 		"queue": "cpp",
 		"coroutine": "cpp",
-		"thread": "cpp"
+		"thread": "cpp",
+		"cassert": "cpp"
 	}
 }

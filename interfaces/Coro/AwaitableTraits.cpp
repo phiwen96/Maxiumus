@@ -1,9 +1,7 @@
-module;
-// #include <cppcoro/detail/get_awaiter.hpp>
-#include <type_traits>
 export module Maximus.Coro.AwaitableTraits;
 
 import Maximus.Coro.GetAwaiter;
+import <type_traits>;
 
 	export template<typename T, typename = void>
 	struct awaitable_traits

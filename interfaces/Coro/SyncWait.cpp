@@ -1,12 +1,19 @@
-module;
-#include <cstdint>
-#include <atomic>
-#include <utility>
+// module;
+// #include <cstdint>
+// #include <atomic>
+// #include <utility>
 export module Maximus.Coro.SyncWait;
 
 import Maximus.Coro.LightweightManualResetEvent;
 import Maximus.Coro.AwaitableTraits;
 import Maximus.Coro.SyncWaitTask;
+
+import <cstdint>;
+import <atomic>;
+import <utility>;
+
+
+
 
 
 

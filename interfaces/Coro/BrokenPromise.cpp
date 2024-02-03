@@ -1,7 +1,5 @@
-module;
-#include <stdexcept>
 export module Maximus.Coro.BrokenPromise;
-
+import <stdexcept>;
 namespace cppcoro
 {
 	/// \brief
