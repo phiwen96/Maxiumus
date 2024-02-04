@@ -25,21 +25,12 @@ import Maximus.Coro.SyncWaitTask;
 
 
 
-	export template<typename AWAITABLE>
-	auto sync_wait(AWAITABLE&& awaitable)
-		-> typename awaitable_traits<AWAITABLE&&>::await_result_t
-	{
-// #if CPPCORO_COMPILER_MSVC
-// 		// HACK: Need to explicitly specify template argument to make_sync_wait_task
-// 		// here to work around a bug in MSVC when passing parameters by universal
-// 		// reference to a coroutine which causes the compiler to think it needs to
-// 		// 'move' parameters passed by rvalue reference.
-// 		auto task = detail::make_sync_wait_task<AWAITABLE>(awaitable);
-// #else
-		auto task = make_sync_wait_task(std::forward<AWAITABLE>(awaitable));
-// #endif
-		lightweight_manual_reset_event <std::mutex, std::condition_variable> event;
-		task.start(event);
-		event.wait();
-		return task.result();
+	export template <typename AWAITABLE>
+	auto sync_wait (AWAITABLE&& awaitable) -> typename awaitable_traits <AWAITABLE&&>::await_result_t {
+
+		auto task = make_sync_wait_task (std::forward <AWAITABLE> (awaitable));
+		auto event = lightweight_manual_reset_event <std::mutex, std::condition_variable> {};
+		task.start (event);
+		event.wait ();
+		return task.result ();
 	}
